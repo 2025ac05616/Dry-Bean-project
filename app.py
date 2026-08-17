@@ -229,12 +229,15 @@ if uploaded_file is not None and st.button("🔍 Predict"):
             predicted_classes
         )
 
-        auc = roc_auc_score(
-            actual_classes,
-            probabilities,
-            multi_class="ovr",
-            average="weighted"
-        )
+        try:
+            auc = roc_auc_score(
+                actual_classes,
+                probabilities,
+                multi_class="ovr",
+                average="weighted"
+            )
+        except ValueError:
+                auc = None
 
         st.subheader("📊 Evaluation Metrics")
 
@@ -245,7 +248,10 @@ if uploaded_file is not None and st.button("🔍 Predict"):
             st.metric("Precision", f"{precision:.4f}")
 
         with col2:
-            st.metric("AUC", f"{auc:.4f}")
+            if auc is not None:
+                st.metric("AUC", f"{auc:.4f}")
+            else:
+                st.metric("AUC", "N/A")
             st.metric("Recall", f"{recall:.4f}")
 
         with col3:
@@ -348,12 +354,15 @@ if uploaded_file is not None and st.button("🔍 Predict"):
                 predicted_labels
             )
 
-            model_auc = roc_auc_score(
-                actual_classes,
-                model_probabilities,
-                multi_class="ovr",
-                average="weighted"
-            )
+            try:
+                model_auc = roc_auc_score(
+                    actual_classes,
+                    model_probabilities,
+                    multi_class="ovr",
+                    average="weighted"
+                )
+            except ValueError:
+                model_auc = np.nan
 
             comparison_results.append({
                 "ML Model Name": name,
